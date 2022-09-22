@@ -68,6 +68,23 @@
 
     function changeiframe(prefix, dirname, name) {
 
+        // 记录旧iframe的scrollx
+        let elementNodeListOf = document.querySelectorAll(".nav-item");
+        let tar
+        elementNodeListOf.forEach(item => {
+            if (item.classList.contains("nav-item-focus")){
+                tar = item
+            }
+        })
+        let tardirname = tar.attributes.getNamedItem("dirname").value;
+        let filename = tar.attributes.getNamedItem("filename").value;
+
+        let scrollY = document.getElementById("iframe1").contentWindow.scrollY;
+        let scrollX = document.getElementById("iframe1").contentWindow.scrollX;
+        // debugger
+
+        tar.classList.add("nav-item-focus")
+
         changeiframe2(prefix, dirname, name)
         window.localStorage.setItem("active", JSON.stringify({
             prefix,
@@ -78,12 +95,14 @@
 
     function changeiframe2(prefix, dirname, name) {
         try{
+            // 切换iframe
             if (prefix) {
                 document.getElementById("iframe1").src = `/${prefix}/resources/${dirname}/${name}`
             } else {
                 document.getElementById("iframe1").src = `/resources/${dirname}/${name}`
             }
 
+            // 切换nav active
             let elementNodeListOf = document.querySelectorAll(".nav-item");
             elementNodeListOf.forEach(item => {
                 item.classList.remove("nav-item-focus")
