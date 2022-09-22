@@ -1,6 +1,18 @@
 import {readdir} from "fs/promises";
 import {readdirSync} from "fs";
 
+let argv = process.argv;
+console.log(argv)
+let arg3 = argv.find(item => item.startsWith("prefix="))
+
+let prefix:string
+if (arg3) {
+    prefix = arg3.split("=")[1].trim()
+} else {
+    prefix = ''
+}
+
+
 const fs = require("fs")
 const fsPromises = require("fs/promises")
 const fsExtra = require("fs-extra")
@@ -12,7 +24,6 @@ if (!fs.existsSync("./dist")) {
 fsExtra.copySync("./resources", "./dist/resources")
 
 fsPromises.readFile("./index-template.html", "utf-8").then((txt: string) => {
-    console.log(txt)
 
     let str1 = "<div class=\"nav-list\"></div>";
     let number = txt.search(str1);
@@ -27,7 +38,7 @@ fsPromises.readFile("./index-template.html", "utf-8").then((txt: string) => {
     readdirSync1.forEach(dirname => {
 
         let name = readdirSync(`./resources/${dirname}`).find(item2 => item2.endsWith(".html"));
-        res1 += `<div class="nav-item" onclick="changeiframe(event,'${dirname}','${name}')">${name}</div>`
+        res1 += `<div class="nav-item" onclick="changeiframe(event,'${prefix}','${dirname}','${name}')">${name}</div>`
     })
 
     res1 += "</div>"

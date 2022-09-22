@@ -51,8 +51,13 @@
 </div>
 
 <script>
-    function changeiframe(e,dirname, name) {
-        document.getElementById("iframe1").src = `./resources/${dirname}/${name}`
+    function changeiframe(e,prefix,dirname, name) {
+        if (prefix){
+            document.getElementById("iframe1").src = `./${prefix}/resources/${dirname}/${name}`
+        }else {
+            document.getElementById("iframe1").src = `./resources/${dirname}/${name}`
+        }
+
 
         document.querySelectorAll(".nav-item").forEach(item=>{
             item.classList.remove("nav-item-focus")
