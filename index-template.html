@@ -79,9 +79,9 @@
     function changeiframe2(prefix, dirname, name) {
         try{
             if (prefix) {
-                document.getElementById("iframe1").src = `./${prefix}/resources/${dirname}/${name}`
+                document.getElementById("iframe1").src = `/${prefix}/resources/${dirname}/${name}`
             } else {
-                document.getElementById("iframe1").src = `./resources/${dirname}/${name}`
+                document.getElementById("iframe1").src = `/resources/${dirname}/${name}`
             }
 
             let elementNodeListOf = document.querySelectorAll(".nav-item");
