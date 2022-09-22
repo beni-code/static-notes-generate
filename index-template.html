@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            width: 100vw;
+            height: 100vh
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        .nav-list {
+            height: 100%;
+            flex: 3 3;
+        }
+
+        .nav-item{
+            padding: 3px;
+            margin: 3px;
+            user-select: none;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .nav-item-focus{
+            background-color: #88c4ffb8;
+            border: 1px solid #82b2ff;
+        }
+
+        .main-content {
+            height: 100%;
+            flex: 7 7;
+        }
+    </style>
+</head>
+<body>
+<div class="nav-list"></div>
+
+<div class="main-content">
+    <iframe id="iframe1" style="width: 100%;height: calc(100% - 10px);border: 0"
+            src=""></iframe>
+</div>
+
+<script>
+    function changeiframe(e,dirname, name) {
+        document.getElementById("iframe1").src = `./resources/${dirname}/${name}`
+
+        document.querySelectorAll(".nav-item").forEach(item=>{
+            item.classList.remove("nav-item-focus")
+        })
+
+        e.target.classList.add("nav-item-focus")
+    }
+</script>
+</body>
+</html>
