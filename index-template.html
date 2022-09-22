@@ -23,7 +23,7 @@
             flex: 3 3;
         }
 
-        .nav-item{
+        .nav-item {
             padding: 3px;
             margin: 3px;
             user-select: none;
@@ -31,7 +31,7 @@
             border: 1px solid transparent;
         }
 
-        .nav-item-focus{
+        .nav-item-focus {
             background-color: #88c4ffb8;
             border: 1px solid #82b2ff;
         }
@@ -51,19 +51,61 @@
 </div>
 
 <script>
-    function changeiframe(e,prefix,dirname, name) {
-        if (prefix){
-            document.getElementById("iframe1").src = `./${prefix}/resources/${dirname}/${name}`
-        }else {
-            document.getElementById("iframe1").src = `./resources/${dirname}/${name}`
+
+    document.body.onload = () => {
+
+        let item1 = window.localStorage.getItem("active");
+
+        if (item1) {
+            let {
+                prefix,
+                dirname,
+                name
+            } = JSON.parse(item1)
+            changeiframe2(prefix, dirname, name)
+        }
+    }
+
+    function changeiframe(prefix, dirname, name) {
+
+        changeiframe2(prefix, dirname, name)
+        window.localStorage.setItem("active", JSON.stringify({
+            prefix,
+            dirname,
+            name
+        }))
+    }
+
+    function changeiframe2(prefix, dirname, name) {
+        try{
+            if (prefix) {
+                document.getElementById("iframe1").src = `./${prefix}/resources/${dirname}/${name}`
+            } else {
+                document.getElementById("iframe1").src = `./resources/${dirname}/${name}`
+            }
+
+            let elementNodeListOf = document.querySelectorAll(".nav-item");
+            elementNodeListOf.forEach(item => {
+                item.classList.remove("nav-item-focus")
+            })
+            let tar
+            elementNodeListOf.forEach(item => {
+                let flag = false
+                for (let i = 0; i < item.attributes.length; i++) {
+                    if (item.attributes[i].name === 'dirname' && item.attributes[i].value === dirname) {
+                        flag = true
+                    }
+                }
+                if (flag) {
+                    tar = item
+                }
+            })
+            tar.classList.add("nav-item-focus")
+        }catch (e){
+            window.localStorage.removeItem("active")
+            location.reload()
         }
 
-
-        document.querySelectorAll(".nav-item").forEach(item=>{
-            item.classList.remove("nav-item-focus")
-        })
-
-        e.target.classList.add("nav-item-focus")
     }
 </script>
 </body>

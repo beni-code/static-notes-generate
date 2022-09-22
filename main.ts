@@ -38,7 +38,7 @@ fsPromises.readFile("./index-template.html", "utf-8").then((txt: string) => {
     readdirSync1.forEach(dirname => {
 
         let name = readdirSync(`./resources/${dirname}`).find(item2 => item2.endsWith(".html"));
-        res1 += `<div class="nav-item" onclick="changeiframe(event,'${prefix}','${dirname}','${name}')">${name}</div>`
+        res1 += `<div dirname="${dirname}" class="nav-item" onclick="changeiframe('${prefix}','${dirname}','${name}')">${name}</div>`
     })
 
     res1 += "</div>"
