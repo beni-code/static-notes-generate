@@ -23,29 +23,26 @@ if (!fs.existsSync("./dist")) {
 
 fsExtra.copySync("./resources", "./dist/resources")
 
-fsPromises.readFile("./index-template.html", "utf-8").then((txt: string) => {
+let readdirSync1 = readdirSync("./resources");
 
-    let str1 = "<div class=\"nav-list\"></div>";
-    let number = txt.search(str1);
+let resourcesData: Array<{dirname:string,name:string}> = []
+readdirSync1.forEach(dirname => {
 
-    let slice1 = txt.slice(0, number);
+    let name = readdirSync(`./resources/${dirname}`).find(item2 => item2.endsWith(".html"))!;
 
-    let slice2 = txt.slice(number + str1.length, txt.length)
-
-    let res1 = slice1 + "<div class=\"nav-list\">";
-
-    let readdirSync1 = readdirSync("./resources");
-    readdirSync1.forEach(dirname => {
-
-        let name = readdirSync(`./resources/${dirname}`).find(item2 => item2.endsWith(".html"));
-        res1 += `<div dirname="${dirname}" filename="${name}" class="nav-item" onclick="changeiframe('${prefix}','${dirname}','${name}')">${name}</div>`
+    resourcesData.push({
+        dirname,
+        name
     })
-
-    res1 += "</div>"
-
-    res1 += slice2;
-
-    fs.writeFileSync("./dist/index.html", res1, "utf-8")
 })
 
+let initDataStr = `let navList = ${JSON.stringify(resourcesData)};`
 
+if (prefix){
+    initDataStr+=`let prefix = ${prefix}`
+}else {
+    initDataStr+=`let prefix = ""`
+}
+
+fs.writeFileSync("./dist/initData.js",initDataStr,'utf-8')
+fs.copyFileSync("./index-template.html","./dist/index.html")

@@ -9,9 +9,16 @@
         body {
             margin: 0;
             padding: 0;
-            display: flex;
+
             width: 100vw;
             height: 100vh
+        }
+
+        #app{
+            display: flex;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
         }
 
         * {
@@ -43,85 +50,69 @@
     </style>
 </head>
 <body>
-<div class="nav-list"></div>
+<div id="app">
+    <div class="nav-list">
+        <div class="nav-item" :class="{'nav-item-focus': item.dirname === active.dirname && item.name === active.name}"
+             v-for="item in navList"
+             @click="changeiframe(item.dirname,item.name)"><span v-text="item.name"></span></div>
+    </div>
 
-<div class="main-content">
-    <iframe id="iframe1" style="width: 100%;height: calc(100% - 10px);border: 0"
-            src=""></iframe>
+    <div class="main-content">
+        <iframe id="iframe1" style="width: 100%;height: calc(100% - 10px);border: 0" src=""></iframe>
+    </div>
 </div>
-<script src="//cdn.bootcdn.net/ajax/libs/eruda/2.3.3/eruda.js"></script>
-<script>eruda.init();</script>
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="initData.js"></script>
 <script>
+    const {createApp} = Vue
 
-
-    document.body.onload = () => {
-
-        let item1 = window.localStorage.getItem("active");
-
-        if (item1) {
-            let {
+    createApp({
+        data() {
+            return {
+                navList,
                 prefix,
-                dirname,
-                name
-            } = JSON.parse(item1)
-            changeiframe2(prefix, dirname, name)
-        }
-    }
-
-    function changeiframe(prefix, dirname, name) {
-
-        // 记录旧iframe的scrollx
-        let elementNodeListOf = document.querySelectorAll(".nav-item");
-        let tar
-        elementNodeListOf.forEach(item => {
-            if (item.classList.contains("nav-item-focus")){
-                tar = item
-            }
-        })
-        let tardirname = tar.getAttribute("dirname");
-        let filename = tar.getAttribute("filename");
-
-        let scrollY = document.getElementById("iframe1").contentWindow.scrollY;
-        let scrollX = document.getElementById("iframe1").contentWindow.scrollX;
-        // debugger
-
-        tar.classList.add("nav-item-focus")
-
-        changeiframe2(prefix, dirname, name)
-        window.localStorage.setItem("active", JSON.stringify({
-            prefix,
-            dirname,
-            name
-        }))
-    }
-
-    function changeiframe2(prefix, dirname, name) {
-        try{
-            // 切换iframe
-            if (prefix) {
-                document.getElementById("iframe1").src = `/${prefix}/resources/${dirname}/${name}`
-            } else {
-                document.getElementById("iframe1").src = `/resources/${dirname}/${name}`
-            }
-
-            // 切换nav active
-            let elementNodeListOf = document.querySelectorAll(".nav-item");
-            elementNodeListOf.forEach(item => {
-                item.classList.remove("nav-item-focus")
-            })
-            let tar
-            elementNodeListOf.forEach(item => {
-                if (item.getAttribute("dirname") === dirname && item.getAttribute("filename") === name){
-                    tar = item
+                active: {
+                    dirname: '',
+                    name: ''
                 }
-            })
-            tar.classList.add("nav-item-focus")
-        }catch (e){
-            window.localStorage.removeItem("active")
-            location.reload()
-        }
+            }
+        },
+        mounted() {
+            let item1 = window.localStorage.getItem("active");
 
-    }
+            if (item1) {
+                let {
+                    dirname,
+                    name
+                } = JSON.parse(item1)
+                this.changeiframe2(dirname, name)
+            }
+
+        },
+        methods: {
+            changeiframe(dirname, name) {
+                this.changeiframe2(dirname, name)
+                window.localStorage.setItem("active", JSON.stringify({
+                    dirname,
+                    name
+                }))
+            },
+            changeiframe2(dirname, name) {
+                // 切换iframe
+                this.$nextTick(() => {
+                    if (this.prefix) {
+                        document.getElementById("iframe1").src = `/${this.prefix}/resources/${dirname}/${name}`
+                    } else {
+                        document.getElementById("iframe1").src = `/resources/${dirname}/${name}`
+                    }
+                })
+
+                this.active.dirname = dirname
+                this.active.name = name
+            }
+        }
+    }).mount('#app')
 </script>
 </body>
 </html>
