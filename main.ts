@@ -45,4 +45,7 @@ if (prefix){
 }
 
 fs.writeFileSync("./dist/initData.js",initDataStr,'utf-8')
-fs.copyFileSync("./index-template.html","./dist/index.html")
+let htmltemp = fs.readFileSync("./index-template.html",'utf-8')
+htmltemp = htmltemp.replace("此处替换读取initData.js",prefix ? `<script src="\\${prefix}\\initData.js"></script>` : '<script src="./initData.js"></script>')
+fs.writeFileSync("./dist/index.html",htmltemp,'utf-8')
+
