@@ -78,7 +78,8 @@
                 tar = item
             }
         })
-        let tardirname = tar.getAttribute("dirname").value;
+        let tardirname = tar.getAttribute("dirname");
+        debugger
         let filename = tar.getAttribute("filename").value;
 
         let scrollY = document.getElementById("iframe1").contentWindow.scrollY;
