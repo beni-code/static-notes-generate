@@ -30,6 +30,40 @@
             flex: 3 3;
         }
 
+        .nav-list-btn {
+            width: 30px;
+            height: 30px;
+            position: absolute;
+            left: 5px;
+            bottom: 5px;
+            z-index: 2;
+            border: 1px solid #d8d8d8;
+            background-color: #fafafa47;
+            border-radius: 5px;
+            visibility: collapse;
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        @media screen and (max-width: 768px) {
+            .nav-list {
+                width: 0;
+                position: absolute;
+                transition: 0.2s;
+                top: 0;
+                left: 0;
+                height: 100%;
+                background-color: white;
+                border-right: 1px solid #d0d0d0;
+                z-index: 3;
+                overflow: hidden;
+            }
+
+            .nav-list-btn {
+                visibility: visible;
+            }
+        }
+
         .nav-item {
             padding: 3px;
             margin: 3px;
@@ -63,7 +97,11 @@
 </head>
 <body>
 <div id="app">
+    <div class="nav-list-btn" @click="navListVisibleSwitch">
+        <img src="./imgs/list.svg" style="width: 100%;height: 100%" alt="">
+    </div>
     <div class="nav-list">
+
         <div class="nav-item" :class="{'nav-item-focus': item.dirname === active.dirname && item.name === active.name}"
              v-for="item in navList"
              @click="changeiframe(item.dirname,item.name)"><span v-text="item.name"></span></div>
@@ -109,6 +147,11 @@
         },
         methods: {
             changeiframe(dirname, name) {
+                let offsetWidth = document.body.offsetWidth;
+                if (offsetWidth < 768){
+                    this.$nextTick(() => { document.querySelector(".nav-list").style.width = '0'})
+                }
+
                 if (this.active.dirname === dirname && this.active.name === name) {
                     return
                 }
@@ -117,6 +160,9 @@
                     dirname,
                     name
                 }))
+            },
+            navListVisibleSwitch() {
+                this.$nextTick(() => { document.querySelector(".nav-list").style.width = '55%'})
             },
             changeiframe2(dirname, name) {
                 this.loadingiframe = true
