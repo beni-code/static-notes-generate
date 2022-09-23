@@ -39,7 +39,7 @@ readdirSync1.forEach(dirname => {
 let initDataStr = `let navList = ${JSON.stringify(resourcesData)};`
 
 if (prefix){
-    initDataStr+=`let prefix = '${prefix}'`
+    initDataStr+=`let prefix = "${prefix}"`
 }else {
     initDataStr+=`let prefix = ""`
 }
