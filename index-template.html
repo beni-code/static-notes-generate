@@ -80,8 +80,9 @@
         })
         let a = tar
         debugger
-        let tardirname = tar.attributes.getNamedItem("dirname").value;
-        let filename = tar.attributes.getNamedItem("filename").value;
+        tar.
+        let tardirname = tar.getAttribute("dirname").value;
+        let filename = tar.getAttribute("filename").value;
 
         let scrollY = document.getElementById("iframe1").contentWindow.scrollY;
         let scrollX = document.getElementById("iframe1").contentWindow.scrollX;
@@ -113,13 +114,7 @@
             })
             let tar
             elementNodeListOf.forEach(item => {
-                let flag = false
-                for (let i = 0; i < item.attributes.length; i++) {
-                    if (item.attributes[i].name === 'dirname' && item.attributes[i].value === dirname) {
-                        flag = true
-                    }
-                }
-                if (flag) {
+                if (item.getAttribute("dirname") === dirname && item.getAttribute("filename") === name){
                     tar = item
                 }
             })
