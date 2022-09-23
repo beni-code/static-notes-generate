@@ -98,7 +98,7 @@
 <body>
 <div id="app">
     <div class="nav-list-btn" @click="navListVisibleSwitch">
-        <img src="./imgs/list.svg" style="width: 100%;height: 100%" alt="">
+        <img :src="`./${prefix?prefix+'/':''}imgs/list.svg`" style="width: 100%;height: 100%" alt="">
     </div>
     <div class="nav-list">
 
