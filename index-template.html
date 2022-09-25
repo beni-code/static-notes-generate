@@ -4,14 +4,21 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>MD-BOOK</title>
     <style>
         body {
             margin: 0;
             padding: 0;
-            display: flex;
+
             width: 100vw;
             height: 100vh
+        }
+
+        #app {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
         }
 
         * {
@@ -21,6 +28,40 @@
         .nav-list {
             height: 100%;
             flex: 3 3;
+        }
+
+        .nav-list-btn {
+            width: 30px;
+            height: 30px;
+            position: absolute;
+            left: 5px;
+            bottom: 5px;
+            z-index: 2;
+            border: 1px solid #d8d8d8;
+            background-color: #fafafa47;
+            border-radius: 5px;
+            visibility: collapse;
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        @media screen and (max-width: 768px) {
+            .nav-list {
+                width: 0;
+                position: absolute;
+                transition: 0.2s;
+                top: 0;
+                left: 0;
+                height: 100%;
+                background-color: white;
+                border-right: 1px solid #d0d0d0;
+                z-index: 3;
+                overflow: hidden;
+            }
+
+            .nav-list-btn {
+                visibility: visible;
+            }
         }
 
         .nav-item {
@@ -39,93 +80,122 @@
         .main-content {
             height: 100%;
             flex: 7 7;
+            position: relative;
+        }
+
+        .iframeloading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: calc(100% - 10px);
+            position: absolute;
+            top: 0;
+            left: 0;
         }
     </style>
 </head>
 <body>
-<div class="nav-list"></div>
+<div id="app">
+    <div class="nav-list-btn" @click="navListVisibleSwitch">
+        <img :src="`./${prefix?prefix+'/':''}imgs/list.svg`" style="width: 100%;height: 100%" alt="">
+    </div>
+    <div class="nav-list">
 
-<div class="main-content">
-    <iframe id="iframe1" style="width: 100%;height: calc(100% - 10px);border: 0"
-            src=""></iframe>
+        <div class="nav-item" :class="{'nav-item-focus': item.dirname === active.dirname && item.name === active.name}"
+             v-for="item in navList"
+             @click="changeiframe(item.dirname,item.name)"><span v-text="item.name"></span></div>
+    </div>
+
+    <div class="main-content">
+        <iframe id="iframe1" style="width: 100%;height: calc(100% - 10px);border: 0" src=""></iframe>
+        <div v-show="loadingiframe" class="iframeloading">
+            <img :src="`./${prefix?prefix+'/':''}imgs/loading2.gif`" alt="" srcset="">
+        </div>
+    </div>
 </div>
 
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+此处替换读取initData.js
 <script>
 
-    document.body.onload = () => {
+    const {createApp} = Vue
 
-        let item1 = window.localStorage.getItem("active");
-
-        if (item1) {
-            let {
+    createApp({
+        data() {
+            return {
+                navList,
                 prefix,
-                dirname,
-                name
-            } = JSON.parse(item1)
-            changeiframe2(prefix, dirname, name)
-        }
-    }
-
-    function changeiframe(prefix, dirname, name) {
-
-        // 记录旧iframe的scrollx
-        let elementNodeListOf = document.querySelectorAll(".nav-item");
-        let tar
-        elementNodeListOf.forEach(item => {
-            if (item.classList.contains("nav-item-focus")){
-                tar = item
+                active: {
+                    dirname: '',
+                    name: ''
+                },
+                loadingiframe: false
             }
-        })
-        let tardirname = tar.attributes.getNamedItem("dirname").value;
-        let filename = tar.attributes.getNamedItem("filename").value;
+        },
+        mounted() {
+            let item1 = window.localStorage.getItem("active");
 
-        let scrollY = document.getElementById("iframe1").contentWindow.scrollY;
-        let scrollX = document.getElementById("iframe1").contentWindow.scrollX;
-        // debugger
-
-        tar.classList.add("nav-item-focus")
-
-        changeiframe2(prefix, dirname, name)
-        window.localStorage.setItem("active", JSON.stringify({
-            prefix,
-            dirname,
-            name
-        }))
-    }
-
-    function changeiframe2(prefix, dirname, name) {
-        try{
-            // 切换iframe
-            if (prefix) {
-                document.getElementById("iframe1").src = `/${prefix}/resources/${dirname}/${name}`
-            } else {
-                document.getElementById("iframe1").src = `/resources/${dirname}/${name}`
+            if (item1) {
+                let {
+                    dirname,
+                    name
+                } = JSON.parse(item1)
+                this.changeiframe2(dirname, name)
             }
 
-            // 切换nav active
-            let elementNodeListOf = document.querySelectorAll(".nav-item");
-            elementNodeListOf.forEach(item => {
-                item.classList.remove("nav-item-focus")
-            })
-            let tar
-            elementNodeListOf.forEach(item => {
-                let flag = false
-                for (let i = 0; i < item.attributes.length; i++) {
-                    if (item.attributes[i].name === 'dirname' && item.attributes[i].value === dirname) {
-                        flag = true
+        },
+        methods: {
+            changeiframe(dirname, name) {
+                let offsetWidth = document.body.offsetWidth;
+                if (offsetWidth < 768){
+                    this.$nextTick(() => { document.querySelector(".nav-list").style.width = '0'})
+                }
+
+                if (this.active.dirname === dirname && this.active.name === name) {
+                    return
+                }
+                this.changeiframe2(dirname, name)
+                window.localStorage.setItem("active", JSON.stringify({
+                    dirname,
+                    name
+                }))
+            },
+            navListVisibleSwitch() {
+                this.$nextTick(() => { document.querySelector(".nav-list").style.width = '55%'})
+            },
+            changeiframe2(dirname, name) {
+                this.loadingiframe = true
+                this.$nextTick(() => {
+
+                    // 保存旧scrollY
+                    let iframe1 = document.getElementById("iframe1");
+                    let find = this.navList.find(item => item.dirname === this.active.dirname && item.name === this.active.name);
+                    if (find) {
+                        find.scrollY = iframe1.contentWindow.scrollY ?? 0
                     }
-                }
-                if (flag) {
-                    tar = item
-                }
-            })
-            tar.classList.add("nav-item-focus")
-        }catch (e){
-            window.localStorage.removeItem("active")
-            location.reload()
-        }
 
-    }
+                    // 切换iframe
+                    if (this.prefix) {
+                        iframe1.src = `/${this.prefix}/resources/${dirname}/${name}`
+                    } else {
+                        iframe1.src = `/resources/${dirname}/${name}`
+                    }
+
+                    let scrollY = this.navList.find(item => item.dirname === dirname && item.name === name).scrollY ?? 0;
+                    iframe1.onload = () => {
+                        iframe1.contentWindow.scrollTo(0, scrollY)
+                        this.loadingiframe = false
+                    }
+
+                }).then(() => {
+                    this.active.dirname = dirname
+                    this.active.name = name
+                })
+
+            }
+        }
+    }).mount('#app')
 </script>
 </body>
 </html>
