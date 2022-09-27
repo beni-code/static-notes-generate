@@ -22,20 +22,30 @@ if (!fs.existsSync("./dist")) {
 
 fsExtra.copySync("./resources", "./dist/resources")
 
-let readdirSync1 = readdirSync("./resources");
+let folders = readdirSync("./resources")
 
-let resourcesData: Array<{dirname:string,name:string}> = []
-readdirSync1.forEach(dirname => {
+let navList:any[] = []
 
-    let name = readdirSync(`./resources/${dirname}`).find(item2 => item2.endsWith(".html"))!;
+folders.forEach(foldername=>{
+    let notedirs = readdirSync(`./resources/${foldername}`)
 
-    resourcesData.push({
-        dirname,
-        name
+    let notes:Array<{dirname: string,name: string}> = []
+    notedirs.forEach(notedirname => {
+        let name = readdirSync(`./resources/${foldername}/${notedirname}`).find(item2 => item2.endsWith(".html"))!;
+        notes.push({
+            dirname: notedirname,
+            name
+        })
+    })
+
+    navList.push({
+        folder: foldername,
+        notes
     })
 })
 
-let initDataStr = `let navList = ${JSON.stringify(resourcesData)};`
+
+let initDataStr = `let navList = ${JSON.stringify(navList)};`
 
 if (prefix){
     initDataStr+=`let prefix = "${prefix}"`
