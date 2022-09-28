@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "tsc main.ts && node main.js",
-    "start with prefix": "tsc main.ts && node main.js prefix=mdbook"
+    "start with prefix": "tsc main.ts && node main.js prefix=mdbook",
+    "tsc": "tsc main.ts",
+    "start2": "node main.js"
   },
   "keywords": [],
   "author": "",

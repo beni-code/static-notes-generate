@@ -29,13 +29,23 @@ let navList:any[] = []
 folders.forEach(foldername=>{
     let notedirs = readdirSync(`./resources/${foldername}`)
 
-    let notes:Array<{dirname: string,name: string}> = []
+    let notes:Array<{dirname: string,name: string,type:string}> = []
     notedirs.forEach(notedirname => {
-        let name = readdirSync(`./resources/${foldername}/${notedirname}`).find(item2 => item2.endsWith(".html"))!;
-        notes.push({
-            dirname: notedirname,
-            name
-        })
+        let name = readdirSync(`./resources/${foldername}/${notedirname}`).find(item2 => item2.endsWith(".html"));
+        if(name){
+            notes.push({
+                dirname: notedirname,
+                type: 'html',
+                name
+            })
+        }else{
+            let name = readdirSync(`./resources/${foldername}/${notedirname}`).find(item2 => item2.endsWith(".pdf"))!;
+            notes.push({
+                dirname: notedirname,
+                type: 'pdf',
+                name
+            })
+        }
     })
 
     navList.push({
